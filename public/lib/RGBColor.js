@@ -8,6 +8,7 @@ export class RGBColor extends Color {
             "red": [255, 0, 0],
             "white": [255, 255, 255],
         };
+        this.channels = ['R','G','B'];
         let R, G, B;
         if (arguments.length === 1 && typeof color === "object") {
             R = color.R;
@@ -19,7 +20,7 @@ export class RGBColor extends Color {
             G = arguments.length >= 2 ? g : 0;
             B = arguments.length >= 3 ? b : 0;
         }
-        let crop = (c) => c > 255 ? 1 : c >= 1 ? c / 255 : c < 0 ? 0 : c;
+        let crop = (c) => c > 255 ? 1 : c > 1 ? c / 255 : c < 0 ? 0 : c;
         this.R = crop(R);
         this.G = crop(G);
         this.B = crop(B);
@@ -30,6 +31,9 @@ export class RGBColor extends Color {
     }
     colorByName(name) {
         return new RGBColor(...(this.colorNames[name]));
+    }
+    getRaw(){
+        return {R:this.R, G:this.G, B:this.B};
     }
     getHSL() {
         let r = this.R;
