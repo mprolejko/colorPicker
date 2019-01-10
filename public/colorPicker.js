@@ -2,21 +2,16 @@
 
 import * as rgb from './lib/RGBColor.js';
 const RGBColor = rgb.RGBColor;
+import * as hsv from './lib/HSVColor.js';
+const HSVColor = hsv.HSVColor;
 
 
 
 class Strip extends React.Component{
   constructor(props) {
     super(props);
-    const val = this.props.values;
-    const c0 = Object.assign({}, val); 
-    const c1 = Object.assign({}, val);
-    c0[this.props.name] = 0;
-    c1[this.props.name] = 1;
-    
+
     this.state = {
-      first: new this.props.model(c0),
-      last: new this.props.model(c1)
     }
   }
 
@@ -29,14 +24,17 @@ class Strip extends React.Component{
 
   updateCanvas() {
     const ctx = this.refs.canvas.getContext('2d');
-
     var grd = ctx.createLinearGradient(0, 0, this.props.width, 0);
-    grd.addColorStop(0, this.state.first.getHEX().hex);
-    grd.addColorStop(1, this.state.last.getHEX().hex);
-
+    var steps = 24;
+    for (var i = 0; i < steps; i++){
+        let col = Object.assign({}, this.props.values); 
+        col[this.props.name] = i * (1 / (steps - 1));
+        let color =  new this.props.model(col);
+        grd.addColorStop(col[this.props.name], color.getHEX().hex);
+    }
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, this.props.width, this.props.height);
-    }
+  }
 
   render() {
     const selector = React.createElement(Selector,{key:"selector", channel:this.props.name,color: new this.props.model(this.props.values)});
@@ -64,7 +62,8 @@ class Selector extends React.Component{
 class ColorBars extends React.Component {
   constructor(props) {
     super(props);
-    let col = new RGBColor(this.props.sample)
+    let col = new this.props.model(this.props.sample)
+
     this.state = { 
       color: col, 
       style:{backgroundColor:col.getHEX().hex}};
@@ -122,3 +121,4 @@ document.querySelectorAll('.color-sample')
 });
 
 ReactDOM.render(React.createElement(ColorBars,{model:RGBColor, sample:{R: 70, G:130,B:220}, width:500, height: 30}), document.getElementById('stripRGB'));
+ReactDOM.render(React.createElement(ColorBars,{model:HSVColor, sample:{H: 70, S:100,V:100}, width:500, height: 30}), document.getElementById('stripHSV'));
