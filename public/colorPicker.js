@@ -4,6 +4,8 @@ import * as rgb from './lib/RGBColor.js';
 const RGBColor = rgb.RGBColor;
 import * as hsv from './lib/HSVColor.js';
 const HSVColor = hsv.HSVColor;
+import * as hsl from './lib/HSLColor.js';
+const HSLColor = hsl.HSLColor;
 
 
 
@@ -122,3 +124,4 @@ document.querySelectorAll('.color-sample')
 
 ReactDOM.render(React.createElement(ColorBars,{model:RGBColor, sample:{R: 70, G:130,B:220}, width:500, height: 30}), document.getElementById('stripRGB'));
 ReactDOM.render(React.createElement(ColorBars,{model:HSVColor, sample:{H: 70, S:100,V:100}, width:500, height: 30}), document.getElementById('stripHSV'));
+ReactDOM.render(React.createElement(ColorBars,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:500, height: 30}), document.getElementById('stripHSL'));
