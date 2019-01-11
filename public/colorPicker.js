@@ -7,15 +7,17 @@ const HSVColor = hsv.HSVColor;
 import * as hsl from './lib/HSLColor.js';
 const HSLColor = hsl.HSLColor;
 
-
-
 class Strip extends React.Component{
   constructor(props) {
     super(props);
-
-    this.state = {
-    }
+    this.setColor = this.setColor.bind(this);
   }
+
+  setColor(){
+    let state = this.props.values;
+    state[this.props.name] = event.offsetX / event.target.width;
+    this.props.updateColor(state);
+  };
 
   componentDidMount() {
     this.updateCanvas();
@@ -39,24 +41,29 @@ class Strip extends React.Component{
   }
 
   render() {
-    const selector = React.createElement(Selector,{key:"selector", channel:this.props.name,color: new this.props.model(this.props.values)});
-    const strip = React.createElement('canvas', {key:"strip", ref: "canvas", width:this.props.width, height:this.props.height});
-    return React.createElement('div',{className:"strip"},[strip,selector]);
+    const selector = React.createElement(Selector,{
+      channel:this.props.name,
+      color: new this.props.model(this.props.values),
+    });
+    const strip = React.createElement('canvas', {
+      ref: "canvas", 
+      width:this.props.width, 
+      height:this.props.height,
+      onClick: this.setColor,
+    });
+    return React.createElement('div',{className:"strip"},strip,selector);
   }
 }
 
 class Selector extends React.Component{
   constructor(props) {
     super(props);
-    var color = this.props.color;
-    var channel = this.props.channel;
-    this.state = {
-      val : color.getRaw()[channel]
-    }
+
   }
 
   render() {
-    return React.createElement('div', {className:"selector", style:{backgroundColor: this.props.color.getHEX().hex, left: (100*this.state.val)+"%"}});
+    let left = (100 * this.props.color.getRaw()[this.props.channel])+"%";
+    return React.createElement('div', {className:"selector", style:{backgroundColor: this.props.color.getHEX().hex, left: left}});
   }
 }
 
@@ -64,12 +71,17 @@ class Selector extends React.Component{
 class ColorBars extends React.Component {
   constructor(props) {
     super(props);
-    let col = new this.props.model(this.props.sample)
-
+    this.updateColor = this.updateColor.bind(this)
     this.state = { 
-      color: col, 
-      style:{backgroundColor:col.getHEX().hex}};
+      color: new this.props.model(this.props.sample)
+    };
   }
+
+  updateColor(newColor){
+    this.setState({
+      color: new this.props.model(newColor)
+    });
+  };
 
   render() {
     const model = new this.props.model();
@@ -80,6 +92,7 @@ class ColorBars extends React.Component {
       bars[i] = React.createElement(Strip,{
         key:channels[i],
         name:channels[i],
+        updateColor: this.updateColor.bind(this),
         model:this.props.model, 
         values:this.state.color.getRaw(), 
         width:this.props.width, 
@@ -122,6 +135,6 @@ document.querySelectorAll('.color-sample')
     );
 });
 
-ReactDOM.render(React.createElement(ColorBars,{model:RGBColor, sample:{R: 70, G:130,B:220}, width:500, height: 30}), document.getElementById('stripRGB'));
-ReactDOM.render(React.createElement(ColorBars,{model:HSVColor, sample:{H: 70, S:100,V:100}, width:500, height: 30}), document.getElementById('stripHSV'));
-ReactDOM.render(React.createElement(ColorBars,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:500, height: 30}), document.getElementById('stripHSL'));
+ReactDOM.render(React.createElement(ColorBars,{model:RGBColor, sample:{R: 70, G:130,B:220}, width:300, height: 20}), document.getElementById('stripRGB'));
+ReactDOM.render(React.createElement(ColorBars,{model:HSVColor, sample:{H: 70, S:100,V:100}, width:300, height: 20}), document.getElementById('stripHSV'));
+ReactDOM.render(React.createElement(ColorBars,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:300, height: 20}), document.getElementById('stripHSL'));
