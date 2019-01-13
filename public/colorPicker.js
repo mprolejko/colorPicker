@@ -10,20 +10,41 @@ const HSLColor = hsl.HSLColor;
 class Strip extends React.Component{
   constructor(props) {
     super(props);
+    this.state = {
+        isDragged: false
+      }
     this.setColor = this.setColor.bind(this);
+    this.mouseDown = this.mouseDown.bind(this);
+    this.mouseUp = this.mouseUp.bind(this);
+    this.mouseMove = this.mouseMove.bind(this);
+  }
+  mouseDown(event){
+    if(event.target.className == "selector")
+      this.setState({isDragged: true});
+  }
+  mouseUp(){
+    this.setState({isDragged: false});
+  }
+  mouseMove(e){
+    if(this.state.isDragged){
+      this.setColor(e);
+    }
   }
 
-  setColor(){console.log(event.type);
+  setColor(event){
     let parent = event.target.closest(".strip")
     let color = this.props.values;
+    let newVal = color[this.props.name];
     if (event.type=="click"){
-      color[this.props.name] = event.offsetX / parent.offsetWidth;
+      newVal = event.clientX / parent.offsetWidth;
     }
-    else if(event.type=="drag"){
-      color[this.props.name] += event.offsetX / parent.offsetWidth;
+    else if(event.type=="mousemove"){
+      newVal += event.movementX / parent.offsetWidth;
     }
-    
-    this.props.updateColor(color);
+    if(typeof newVal !== "undefined" && !isNaN(newVal)){
+      color[this.props.name] = newVal;
+      this.props.updateColor(color);
+    }
   };
 
   componentDidMount() {
@@ -51,33 +72,31 @@ class Strip extends React.Component{
     const selector = React.createElement(Selector,{
       channel:this.props.name,
       color: new this.props.model(this.props.values),
-      onDrag: this.setColor
     });
     const strip = React.createElement('canvas', {
       ref: "canvas", 
       width:this.props.width, 
       height:this.props.height,
-      onClick: this.setColor,
+     
     });
-    return React.createElement('div',{className:"strip"},strip,selector);
+    return React.createElement('div',{
+      className:"strip",
+      onMouseMove: this.mouseMove,
+      onMouseDown: this.mouseDown,
+      onMouseUp: this.mouseUp,
+      onClick: this.setColor,
+    },strip,selector);
   }
 }
 
 class Selector extends React.Component{
   constructor(props) {
     super(props);
-    this.state = {
-      //isDragged: false;
-    }
   }
-
   render() {
     let left = (100 * this.props.color.getRaw()[this.props.channel])+"%";
     return React.createElement('div', {
       className:"selector", 
-      draggable:true, 
-      onDrag: this.props.onDrag,
-      //onMouse
       style:{backgroundColor: this.props.color.getHEX().hex, left: left}
     });
   }
@@ -154,8 +173,3 @@ document.querySelectorAll('.color-sample')
 ReactDOM.render(React.createElement(ColorBars,{model:RGBColor, sample:{R: 70, G:130,B:220}, width:300, height: 20}), document.getElementById('stripRGB'));
 ReactDOM.render(React.createElement(ColorBars,{model:HSVColor, sample:{H: 70, S:100,V:100}, width:300, height: 20}), document.getElementById('stripHSV'));
 ReactDOM.render(React.createElement(ColorBars,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:300, height: 20}), document.getElementById('stripHSL'));
-
-
-// to fix dropping selector bug https://stackoverflow.com/questions/12128216/html5-drag-release-offsetx-offsety-jump
-document.addEventListener("dragover", ( e ) => e.preventDefault(), false);
-document.addEventListener("drop", ( e ) => e.preventDefault() , false);
