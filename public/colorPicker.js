@@ -13,10 +13,17 @@ class Strip extends React.Component{
     this.setColor = this.setColor.bind(this);
   }
 
-  setColor(){
-    let state = this.props.values;
-    state[this.props.name] = event.offsetX / event.target.width;
-    this.props.updateColor(state);
+  setColor(){console.log(event.type);
+    let parent = event.target.closest(".strip")
+    let color = this.props.values;
+    if (event.type=="click"){
+      color[this.props.name] = event.offsetX / parent.offsetWidth;
+    }
+    else if(event.type=="drag"){
+      color[this.props.name] += event.offsetX / parent.offsetWidth;
+    }
+    
+    this.props.updateColor(color);
   };
 
   componentDidMount() {
@@ -44,6 +51,7 @@ class Strip extends React.Component{
     const selector = React.createElement(Selector,{
       channel:this.props.name,
       color: new this.props.model(this.props.values),
+      onDrag: this.setColor
     });
     const strip = React.createElement('canvas', {
       ref: "canvas", 
@@ -58,12 +66,20 @@ class Strip extends React.Component{
 class Selector extends React.Component{
   constructor(props) {
     super(props);
-
+    this.state = {
+      //isDragged: false;
+    }
   }
 
   render() {
     let left = (100 * this.props.color.getRaw()[this.props.channel])+"%";
-    return React.createElement('div', {className:"selector", style:{backgroundColor: this.props.color.getHEX().hex, left: left}});
+    return React.createElement('div', {
+      className:"selector", 
+      draggable:true, 
+      onDrag: this.props.onDrag,
+      //onMouse
+      style:{backgroundColor: this.props.color.getHEX().hex, left: left}
+    });
   }
 }
 
@@ -138,3 +154,8 @@ document.querySelectorAll('.color-sample')
 ReactDOM.render(React.createElement(ColorBars,{model:RGBColor, sample:{R: 70, G:130,B:220}, width:300, height: 20}), document.getElementById('stripRGB'));
 ReactDOM.render(React.createElement(ColorBars,{model:HSVColor, sample:{H: 70, S:100,V:100}, width:300, height: 20}), document.getElementById('stripHSV'));
 ReactDOM.render(React.createElement(ColorBars,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:300, height: 20}), document.getElementById('stripHSL'));
+
+
+// to fix dropping selector bug https://stackoverflow.com/questions/12128216/html5-drag-release-offsetx-offsety-jump
+document.addEventListener("dragover", ( e ) => e.preventDefault(), false);
+document.addEventListener("drop", ( e ) => e.preventDefault() , false);
