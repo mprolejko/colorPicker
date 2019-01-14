@@ -11,7 +11,8 @@ class Strip extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-        isDragged: false
+        isDragged: false,
+        value: this.props.values[this.props.name]
       }
     this.setColor = this.setColor.bind(this);
     this.mouseDown = this.mouseDown.bind(this);
@@ -19,8 +20,8 @@ class Strip extends React.Component{
     this.mouseMove = this.mouseMove.bind(this);
   }
   mouseDown(event){
-    if(event.target.className == "selector")
       this.setState({isDragged: true});
+      this.setColor(event)
   }
   mouseUp(){
     this.setState({isDragged: false});
@@ -31,17 +32,18 @@ class Strip extends React.Component{
     }
   }
 
-  setColor(event){
-    let parent = event.target.closest(".strip")
+  setColor(event){console.log("setColor",event.type)
     let color = this.props.values;
     let newVal = color[this.props.name];
-    if (event.type=="click"){
-      newVal = event.clientX / parent.offsetWidth;
+    if (event.type=="mousedown"){
+      let x= event.pageX - event.target.closest(".strip").offsetLeft
+      newVal = x / this.props.width;
     }
     else if(event.type=="mousemove"){
-      newVal += event.movementX / parent.offsetWidth;
+      newVal += event.movementX / this.props.width;
     }
     if(typeof newVal !== "undefined" && !isNaN(newVal)){
+      this.setState({value:newVal});
       color[this.props.name] = newVal;
       this.props.updateColor(color);
     }
@@ -51,7 +53,7 @@ class Strip extends React.Component{
     this.updateCanvas();
   }
   componentDidUpdate() {
-      this.updateCanvas();
+    this.updateCanvas();
   }
 
   updateCanvas() {
@@ -69,36 +71,27 @@ class Strip extends React.Component{
   }
 
   render() {
-    const selector = React.createElement(Selector,{
-      channel:this.props.name,
-      color: new this.props.model(this.props.values),
+    let color =  new this.props.model(this.props.values);
+    let left = (100 * color.getRaw()[this.props.name])+"%";
+    const selector = React.createElement('div', {
+      className:"selector", 
+      style: {
+        backgroundColor: color.getHEX().hex, 
+        left: left
+      }
     });
     const strip = React.createElement('canvas', {
       ref: "canvas", 
-      width:this.props.width, 
-      height:this.props.height,
+      width: this.props.width, 
+      height: this.props.height,
      
     });
     return React.createElement('div',{
       className:"strip",
       onMouseMove: this.mouseMove,
       onMouseDown: this.mouseDown,
-      onMouseUp: this.mouseUp,
-      onClick: this.setColor,
+      onMouseUp: this.mouseUp
     },strip,selector);
-  }
-}
-
-class Selector extends React.Component{
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    let left = (100 * this.props.color.getRaw()[this.props.channel])+"%";
-    return React.createElement('div', {
-      className:"selector", 
-      style:{backgroundColor: this.props.color.getHEX().hex, left: left}
-    });
   }
 }
 
@@ -113,8 +106,13 @@ class ColorBars extends React.Component {
   }
 
   updateColor(newColor){
+    let color =  new this.props.model(newColor);
     this.setState({
-      color: new this.props.model(newColor)
+      color: color
+    });
+    document.querySelectorAll('.selected')
+      .forEach(domContainer => {
+        domContainer.setAttribute("style","background-color:"+color.getHEX().hex)
     });
   };
 
@@ -143,16 +141,26 @@ class ColorBars extends React.Component {
 class ColorSample extends React.Component {
   constructor(props) {
     super(props);
-    let col = new RGBColor(this.props.sample)
+    let col = new this.props.model(this.props.sample)
     this.state = { 
       color: col, 
       selected: false,
-      style:{backgroundColor:col.getHEX().hex}};
+      style:{backgroundColor:col.getHEX().hex}
+    };
+    this.select = this.select.bind(this);
+  }
+
+  select(){
+    this.setState({ selected : !this.state.selected});
   }
 
   render() {
     return React.createElement('div',
-        {style:this.state.style},
+        {
+          style:this.state.style,
+          className: this.state.selected? "selected":"",
+          onClick: this.select
+        },
         this.state.style.backgroundColor
     )
   }
@@ -160,12 +168,11 @@ class ColorSample extends React.Component {
 
 document.querySelectorAll('.color-sample')
   .forEach(domContainer => {
-
-    const sampleID = parseInt(domContainer.dataset.sampleid, 10);
+    //const sampleID = parseInt(domContainer.dataset.sampleid, 10);
     const channels = domContainer.dataset.sample.split(",")
     const sample = {R:parseInt(channels[0], 10), G:parseInt(channels[1], 10), B:parseInt(channels[1], 10)};
     ReactDOM.render(
-      React.createElement(ColorSample, { sampleID: sampleID , sample: sample}),
+      React.createElement(ColorSample, { model: RGBColor , sample: sample}),
       domContainer
     );
 });

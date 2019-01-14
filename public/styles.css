@@ -6,6 +6,9 @@
     padding:20px;
     font-family: 'Courier New', Courier, monospace
 }
+.color-sample >div.selected{
+    border-width:10px;
+}
 canvas {
 
     border: 1px solid black;
