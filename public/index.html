@@ -1,22 +1,93 @@
 <html>
 <head>
     <title>Color Picker</title>
-    <link media="all" rel="stylesheet" href="styles.css">
+
+    <link media="all" rel="stylesheet" href="./src/ColorBars.module.css">
+    <link media="all" rel="stylesheet" href="./src/ColorSample.module.css">
+    <link media="all" rel="stylesheet" href="./src/ColorPicker.module.css">
+    <link media="all" rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <div id="root">
-        <div class="color-sample" data-sampleid="1" data-sample="61,39,180"></div>
-        <div class="color-sample" data-sampleid="2" data-sample="100,210,179"></div>
-        <div class="color-sample" data-sampleid="3" data-sample="197,39,140"></div>
-    </div>
-<div id="stripRGB"></div>
-<div id="stripHSV"></div>
-<div id="stripHSL"></div>
 
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-  
-    <!-- Load our React component. -->
-    <script  type="module" src="./colorPicker.js"></script>
+
+<h1>Using React compoments to select a color in various color spaces</h1>
+
+<article>
+    <h2>Example 1. (RGB color space)</h2>
+    <p>Color bars without update function: nothing happens on select</p>
+    <div id="stripRGB"></div>
+    <link media="all" rel="stylesheet" href="src/ColorBars.module.css">
+    <script type="module">
+        import {RGBColor} from './lib/RGBColor.js';
+        import {ColorBars} from './src/colorBars.js';
+        ReactDOM.render(React.createElement(ColorBars,{model:RGBColor, sample:{R: 70, G:130,B:220}, width:300, height: 20}), document.getElementById('stripRGB'));
+        </script>
+</article>  
+<article>
+    <h2>Example 2. (HSV color space)</h2>
+    <p>Color bars with element to show selected values</p>
+    <div id="stripHSV"></div><div id="HSVsample"></div>
+    <script type="module">
+        import {HSVColor} from './lib/HSVColor.js';
+        import {ColorBars} from './src/colorBars.js';
+
+        ReactDOM.render(React.createElement(ColorBars,{model:HSVColor, sample:{H: 70, S:100,V:100}, width:300, height: 20, update:
+            (newColor)=>{
+                document.getElementById("HSVsample").textContent = JSON.stringify(newColor);
+            }
+        }), document.getElementById('stripHSV'));
+    </script>
+</article>  
+<article>
+    <h2>Example 3. (HSL color space)</h2>
+    <p>Color bars with couple of samples. Select a sample to be updated on change the color</p>
+    <div id="samples">
+            <div class="color-sample" data-sample="61,39,180"></div>
+            <div class="color-sample" data-sample="100,210,179"></div>
+            <div class="color-sample" data-sample="197,39,140"></div>
+    </div>
+    <div id="stripHSL"></div>
+    <script type="module">
+            import {RGBColor} from './lib/RGBColor.js';
+            import {HSLColor} from './lib/HSLColor.js';
+            import {ColorSample} from './src/colorSample.js';
+            import {ColorBars} from './src/colorBars.js';
+
+            document.querySelectorAll('.color-sample')
+            .forEach(domContainer => {
+                // read the sample data on sample
+                const channels = domContainer.dataset.sample.split(",")
+                const sample = {R:parseInt(channels[0], 10), G:parseInt(channels[1], 10), B:parseInt(channels[1], 10)};
+                ReactDOM.render(
+                React.createElement(ColorSample, { model: RGBColor , sample: sample}),
+                domContainer
+                );
+            });
+    
+            ReactDOM.render(React.createElement(ColorBars,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:300, height: 20, update:
+                (newColor)=>{
+                    document.querySelectorAll('.selected')
+                        .forEach(domContainer => {
+                            let color =  new HSLColor(newColor);
+                            domContainer.setAttribute("style","background-color:"+color.getHEX().hex)
+                        });
+                }
+            }), document.getElementById('stripHSL'));
+        </script>
+</article>  
+<article>
+    <h2>Example 4. (HSL color space)</h2>
+    <p>Color bars associated with a single sample element (no matter if selected or not)</p>
+    <div id="picker"></div>
+    <script type="module">
+        import {HSLColor} from './lib/HSLColor.js';
+        import {Picker} from './src/ColorPicker.js';
+        ReactDOM.render(React.createElement(Picker,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:500, height: 30}), document.getElementById('picker'));
+    </script> 
+</article>
+
+
 </body>
 </html>

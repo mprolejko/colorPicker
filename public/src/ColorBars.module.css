@@ -1,0 +1,11 @@
+.Strip {
+    position:relative;
+    display:inline-block;
+}
+.Strip .selector{
+    position:absolute;
+    width:10px;
+    height:100%;
+    top:-5px;left:0;
+    margin-left:-5px;
+}

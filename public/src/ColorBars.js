@@ -1,12 +1,5 @@
 'use strict';
 
-import * as rgb from './lib/RGBColor.js';
-const RGBColor = rgb.RGBColor;
-import * as hsv from './lib/HSVColor.js';
-const HSVColor = hsv.HSVColor;
-import * as hsl from './lib/HSLColor.js';
-const HSLColor = hsl.HSLColor;
-
 class Strip extends React.Component{
   constructor(props) {
     super(props);
@@ -32,7 +25,7 @@ class Strip extends React.Component{
     }
   }
 
-  setColor(event){console.log("setColor",event.type)
+  setColor(event){
     let color = this.props.values;
     let newVal = color[this.props.name];
     if (event.type=="mousedown"){
@@ -87,7 +80,7 @@ class Strip extends React.Component{
      
     });
     return React.createElement('div',{
-      className:"strip",
+      className:"Strip",
       onMouseMove: this.mouseMove,
       onMouseDown: this.mouseDown,
       onMouseUp: this.mouseUp
@@ -96,7 +89,7 @@ class Strip extends React.Component{
 }
 
 
-class ColorBars extends React.Component {
+export class ColorBars extends React.Component {
   constructor(props) {
     super(props);
     this.updateColor = this.updateColor.bind(this)
@@ -110,10 +103,9 @@ class ColorBars extends React.Component {
     this.setState({
       color: color
     });
-    document.querySelectorAll('.selected')
-      .forEach(domContainer => {
-        domContainer.setAttribute("style","background-color:"+color.getHEX().hex)
-    });
+    if(typeof this.props.update == 'function')
+      this.props.update(newColor);
+    
   };
 
   render() {
@@ -133,50 +125,7 @@ class ColorBars extends React.Component {
       });
     }
 
-    return React.createElement('div', {}, bars)
+    return React.createElement('div', {className:"ColorBars"}, bars)
   }
 
 }
-
-class ColorSample extends React.Component {
-  constructor(props) {
-    super(props);
-    let col = new this.props.model(this.props.sample)
-    this.state = { 
-      color: col, 
-      selected: false,
-      style:{backgroundColor:col.getHEX().hex}
-    };
-    this.select = this.select.bind(this);
-  }
-
-  select(){
-    this.setState({ selected : !this.state.selected});
-  }
-
-  render() {
-    return React.createElement('div',
-        {
-          style:this.state.style,
-          className: this.state.selected? "selected":"",
-          onClick: this.select
-        },
-        this.state.style.backgroundColor
-    )
-  }
-}
-
-document.querySelectorAll('.color-sample')
-  .forEach(domContainer => {
-    //const sampleID = parseInt(domContainer.dataset.sampleid, 10);
-    const channels = domContainer.dataset.sample.split(",")
-    const sample = {R:parseInt(channels[0], 10), G:parseInt(channels[1], 10), B:parseInt(channels[1], 10)};
-    ReactDOM.render(
-      React.createElement(ColorSample, { model: RGBColor , sample: sample}),
-      domContainer
-    );
-});
-
-ReactDOM.render(React.createElement(ColorBars,{model:RGBColor, sample:{R: 70, G:130,B:220}, width:300, height: 20}), document.getElementById('stripRGB'));
-ReactDOM.render(React.createElement(ColorBars,{model:HSVColor, sample:{H: 70, S:100,V:100}, width:300, height: 20}), document.getElementById('stripHSV'));
-ReactDOM.render(React.createElement(ColorBars,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:300, height: 20}), document.getElementById('stripHSL'));
