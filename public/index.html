@@ -70,8 +70,9 @@
                 (newColor)=>{
                     document.querySelectorAll('.selected')
                         .forEach(domContainer => {
-                            let color =  new HSLColor(newColor);
-                            domContainer.setAttribute("style","background-color:"+color.getHEX().hex)
+                            let color =  (new HSLColor(newColor)).getHEX().hex;
+                            domContainer.setAttribute("style","background-color:"+color);
+                            domContainer.textContent = color;
                         });
                 }
             }), document.getElementById('stripHSL'));
