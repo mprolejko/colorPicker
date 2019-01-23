@@ -6,7 +6,6 @@ React components for picking a color in various color spaces.
 * [Magicolors](https://github.com/mprolejko/magicolors) - Classes for managing color spaces
 * [React](https://reactjs.org/) - Library for building user interface, without JSX
 
-## 
 
 ## Use
 #### Color Bars
@@ -30,6 +29,8 @@ React.createElement(ColorSample, { model: RGBColor , sample: {R: 70, G:150, B:20
 
 Color sample can be selected by clicking, and then automatically newly selected color on any of the ColorBars will appear.
 
+## Example
+Check working example http://prolejko.pl/colorPicker
 
 ## Acknowledgment
 This is just my first React project, still full of bugs.
