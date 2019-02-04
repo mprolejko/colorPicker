@@ -22,9 +22,17 @@ export class ColorPicker extends React.Component{
   }
 
   render() {
-    let bars = React.createElement(ColorBars,{model:this.props.model, sample:this.state.sample, width:this.props.width, height: this.props.height, update: this.update});
-    let sample = React.createElement(ColorSample, { model: this.props.model , sample: this.state.sample})
-
+    let bars = React.createElement(ColorBars,{
+      model:this.props.model, 
+      sample:this.state.sample, 
+      width:this.props.width, 
+      height: this.props.height, 
+      update: this.update
+    });
+    let sample = React.createElement(ColorSample, { 
+      model: this.props.model , 
+      sample: this.state.sample
+    });
 
     return React.createElement('div',{
       className:"ColorPicker",
