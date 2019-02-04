@@ -15,7 +15,7 @@ const ColorSample = cs.ColorSample;
 
 
 
-export class Picker extends React.Component{
+export class ColorPicker extends React.Component{
   constructor(props) {
     super(props);
     this.state = {

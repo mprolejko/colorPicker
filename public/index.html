@@ -9,8 +9,8 @@
 </head>
 <body>
 
-    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
 
 <h1>Using React compoments to select a color in various color spaces</h1>
 
@@ -84,8 +84,8 @@
     <div id="picker"></div>
     <script type="module">
         import {HSLColor} from './lib/HSLColor.js';
-        import {Picker} from './src/ColorPicker.js';
-        ReactDOM.render(React.createElement(Picker,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:500, height: 30}), document.getElementById('picker'));
+        import {ColorPicker} from './src/ColorPicker.js';
+        ReactDOM.render(React.createElement(ColorPicker,{model:HSLColor, sample:{H: 70, S:80,L:80}, width:500, height: 30}), document.getElementById('picker'));
     </script> 
 </article>
 
