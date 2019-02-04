@@ -5,6 +5,7 @@
     <link media="all" rel="stylesheet" href="./src/ColorBars.module.css">
     <link media="all" rel="stylesheet" href="./src/ColorSample.module.css">
     <link media="all" rel="stylesheet" href="./src/ColorPicker.module.css">
+    <link media="all" rel="stylesheet" href="./src/ColorRect.module.css">
     <link media="all" rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -89,6 +90,22 @@
     </script> 
 </article>
 
-
+<article>
+    <h2>Example 5. (HSL color space)</h2>
+    <p> 2D color picker with bar for third channel.</p>
+    <div id="rect"></div>
+    <script type="module">
+        import {HSLColor} from './lib/HSLColor.js';
+        import {ColorPickerSquare} from './src/ColorPickerSquare.js';
+        ReactDOM.render(React.createElement(ColorPickerSquare,{
+            model:HSLColor, 
+            sample:{H: 70, S:80,L:80}, 
+            width:500, 
+            height: 30, 
+            channel:'S' 
+        }
+        ), document.getElementById('rect'));
+    </script> 
+</article>
 </body>
 </html>

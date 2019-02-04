@@ -1,6 +1,6 @@
 'use strict';
 
-class Strip extends React.Component{
+export class Strip extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
@@ -105,7 +105,6 @@ export class ColorBars extends React.Component {
     });
     if(typeof this.props.update == 'function')
       this.props.update(newColor);
-    
   };
 
   render() {

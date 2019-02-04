@@ -1,0 +1,14 @@
+.ColorRect {
+    position:relative;
+    display:inline-block;
+}
+.ColorRect .selector{
+    position:absolute;
+    width:10px;
+    height:10px;
+    top:0px;left:0pn;
+    margin-left:-5px;
+    margin-top:-5px;
+    border:1px solid black;
+    border-radius: 5px;
+}
