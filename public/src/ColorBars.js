@@ -84,7 +84,8 @@ export class Strip extends React.Component{
       onMouseMove: this.mouseMove,
       onMouseDown: this.mouseDown,
       onMouseUp: this.mouseUp
-    },strip,selector);
+    },React.createElement('span', {className: "label"},this.props.name),
+    strip,selector);
   }
 }
 
