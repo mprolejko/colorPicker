@@ -1,12 +1,5 @@
 'use strict';
 
-import * as rgb from '../lib/RGBColor.js';
-const RGBColor = rgb.RGBColor;
-import * as hsv from '../lib/HSVColor.js';
-const HSVColor = hsv.HSVColor;
-import * as hsl from '../lib/HSLColor.js';
-const HSLColor = hsl.HSLColor;
-
 import * as cb from './ColorBars.js';
 const ColorBars = cb.ColorBars;
 
